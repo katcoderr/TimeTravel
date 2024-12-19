@@ -61,5 +61,49 @@ app.post("/create-account", async (req,res)=>{
     })
 })
 
+app.post("/login", async (req,res)=>{
+    const {email, password } = req.body
+
+    if(!email || !password){
+        return res.status(400).json({
+            error : true,
+            message : "Email and password are required"
+        })
+    }
+
+    const user = await User.findOne({
+        email
+    })
+
+    if(!user){
+        return res.status(400).json({
+            error : true,
+            message : "User does not exists"
+        })
+    }
+
+    const isPasswordValid = await bcrypt.compare(password ,user.password)
+
+    if(!isPasswordValid){
+        return res.status(400).json({
+            error : true,
+            message : "Invalid Credentials"
+        })
+    }
+
+    const accessToken = jwt.sign({
+        userId : user._id
+    }, process.env.ACCESS_TOKEN_SECRET,{
+        expiresIn : '72h'
+    })
+
+    return res.status(200).json({
+        error : false,
+        user : {fullName : user.fullName, email : user.email},
+        accessToken,
+        messsge : "Login Successful"
+    })
+ })
+
 app.listen(3000)
 module.exports = app
