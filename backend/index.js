@@ -156,5 +156,19 @@ app.post("/add-story", authenticateToken,  async(req,res)=>{
 
 })
 
+app.get("/get-all-stories", authenticateToken, async(req,res)=>{
+    const {userId} = req.user
+
+    try{
+        const stories = await Story.find({userId : userId}).sort({isFavourite : -1})
+    res.status(200).json({stories : stories})
+    } catch (error){
+        res.status(500).json({
+            error : true,
+            message : error.message
+        })
+    }
+})
+
 app.listen(3000)
 module.exports = app
