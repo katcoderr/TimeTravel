@@ -6,6 +6,7 @@ const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
 const { authenticateToken } = require("./utilities")
 const User = require("./models/user.model")
+const Story = require("./models/story.model")
 mongoose.connect(process.env.connectionString)
 
 
@@ -117,6 +118,42 @@ app.get("/get-user", authenticateToken, async(req,res)=>{
         user : isUser,
         message : ""
     })
+})
+
+app.post("/add-story", authenticateToken,  async(req,res)=>{
+    const {title, story, visitedLocation, imageUrl, visitedDate} = req.body
+    const {userId} = req.user
+
+    if(!title || !story || !visitedLocation || !imageUrl || !visitedDate){
+        return res.status(400).json({
+            error : true,
+            message : "All fields are required"
+        })
+    }
+
+    const parsedVisitedDate = new Date(parseInt(visitedDate))
+
+    try{
+        const timestory = new Story({
+            title,
+            story,
+            visitedLocation,
+            userId,
+            imageUrl,
+            visitedDate : parsedVisitedDate
+        })
+
+        await timestory.save()
+        res.status(201).json({
+            story : timestory, message : "Added Succesfully"
+        })
+    } catch(error){
+        res.status(400).json({
+            error : true,
+            message : error.message
+        })
+    }
+
 })
 
 app.listen(3000)
