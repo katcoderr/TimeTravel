@@ -4,7 +4,7 @@ const express = require("express")
 const cors = require("cors")
 const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
-
+const { authenticateToken } = require("./utilities")
 const User = require("./models/user.model")
 mongoose.connect(process.env.connectionString)
 
@@ -104,6 +104,20 @@ app.post("/login", async (req,res)=>{
         messsge : "Login Successful"
     })
  })
+
+app.get("/get-user", authenticateToken, async(req,res)=>{
+    const { userId } = req.user
+    const isUser = await User.findOne({_id : userId})
+
+    if(!isUser){
+        return res.sendStatus(401)
+    }
+
+    return res.json({
+        user : isUser,
+        message : ""
+    })
+})
 
 app.listen(3000)
 module.exports = app
