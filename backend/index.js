@@ -274,5 +274,46 @@ app.post("/edit-story/:id", authenticateToken, async(req,res)=>{
     }
 })
 
+
+app.delete("/delete-story/:id", authenticateToken ,async(req,res)=>{
+    const { id } = req.params
+    const { userId } = req.user
+
+    try {
+        const timestory = await Story.findOne({_id : id , userId : userId})
+
+        if(!timestory){
+            return res.status(404).json({
+                error : true,
+                message : "Story not found"
+            })
+        }
+
+        await timestory.deleteOne({_id : id , userId : userId})
+
+        const imageUrl = timestory.imageUrl
+
+        const filename = path.basename(imageUrl)
+
+        const filePath = path.join(__dirname , "uploads", filename)
+
+        fs.unlink(filePath, (err)=>{
+            if(err){
+                console.error("Failed to delete image file: ", err)
+            }
+        })
+
+        res.status(200).json({
+            message : "Story deleted successfully"
+        })
+    } catch(error) {
+        res.status(500).json({
+            error : true,
+            message : error.message
+        })
+    }
+})
+
+
 app.listen(3000)
 module.exports = app
