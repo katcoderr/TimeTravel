@@ -123,6 +123,63 @@ app.get("/get-user", authenticateToken, async(req,res)=>{
     })
 })
 
+
+
+app.post("/image-upload", upload.single("image") , async (req,res)=>{
+    try {
+        if(!req.file){
+            return res.status(400).json({
+                error : true,
+                message : "No image uploaded"
+            })
+        }
+        
+        const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`
+        res.status(201).json({
+            imageUrl
+        })
+    } catch (error){
+        res.status(500).json({
+            error : true,
+            message : error.message
+        })
+    }
+})
+
+app.delete("/delete-image", async(req,res)=>{
+    const {imageUrl} = req.query
+    if(!imageUrl){
+        return res.status(400).json({
+            error : true,
+            message : "imageUrl parameter is required"
+        })
+    }
+
+    try{
+        const filename = path.basename(imageUrl)
+        const filePath = path.join(__dirname, 'uploads', filename)
+
+        if(fs.existsSync(filePath)){
+            fs.unlinkSync(filePath)
+            res.status(200).json({
+                message : "Image Deleted Successfully"
+            })
+        } else {
+            res.status(200).json({
+                error : true,
+                message : "Image not found"
+            })
+        }
+    } catch (error){
+        res.status(500).json({
+            error : true,
+            messsage : error.message
+        })
+    }
+})
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+
 app.post("/add-story", authenticateToken,  async(req,res)=>{
     const {title, story, visitedLocation, imageUrl, visitedDate} = req.body
     const {userId} = req.user
@@ -173,62 +230,49 @@ app.get("/get-all-stories", authenticateToken, async(req,res)=>{
     }
 })
 
+app.post("/edit-story/:id", authenticateToken, async(req,res)=>{
+    const {id} = req.params
 
-app.post("/image-upload", upload.single("image") , async (req,res)=>{
+    const {title, story, visitedLocation, imageUrl, visitedDate} = req.body
+    const {userId} = req.user
+
+    if(!title || !story || !visitedLocation || !imageUrl || !visitedDate){
+        return res.status(400).json({
+            error : true,
+            message : "All fields are required"
+        })
+    }
+
+    const parsedVisitedDate = new Date(parseInt(visitedDate))
+
     try {
-        if(!req.file){
-            return res.status(400).json({
+        const timestory = await Story.findOne({_id : id , userId : userId})
+
+        if(!timestory){
+            return res.status(404).json({
                 error : true,
-                message : "No image uploaded"
+                message : "Story not found"
             })
         }
 
-        const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`
-        res.status(201).json({
-            imageUrl
+        timestory.title = title
+        timestory.story = story
+        timestory.visitedLocation = visitedLocation
+        timestory.imageUrl = imageUrl
+        timestory.visitedDate = parsedVisitedDate
+
+        await timestory.save()
+        res.status(200).json({
+            error : true,
+            message : "Update Successful"
         })
-    } catch (error){
+    } catch(error){
         res.status(500).json({
             error : true,
             message : error.message
         })
     }
 })
-
-app.delete("/delete-image", async(req,res)=>{
-    const {imageUrl} = req.query
-    if(!imageUrl){
-        return res.status(400).json({
-            error : true,
-            message : "imageUrl parameter is required"
-        })
-    }
-
-    try{
-        const filename = path.basename(imageUrl)
-        const filePath = path.join(__dirname, 'uploads', filename)
-
-        if(fs.existsSync(filePath)){
-            fs.unlinkSync(filePath)
-            res.status(200).json({
-                message : "Image Deleted Successfully"
-            })
-        } else {
-            res.status(200).json({
-                error : true,
-                message : "Image not found"
-            })
-        }
-    } catch (error){
-        res.status(500).json({
-            error : true,
-            messsage : error.message
-        })
-    }
-})
-
-app.use("/uploads", express.static(path.join(__dirname, "uploads")))
-
 
 app.listen(3000)
 module.exports = app
