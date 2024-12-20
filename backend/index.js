@@ -195,5 +195,8 @@ app.post("/image-upload", upload.single("image") , async (req,res)=>{
     }
 })
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+
+
 app.listen(3000)
 module.exports = app
