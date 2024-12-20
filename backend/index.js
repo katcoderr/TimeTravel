@@ -4,9 +4,12 @@ const express = require("express")
 const cors = require("cors")
 const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
+const fs = require("fs")
+const path = require("path")
 const { authenticateToken } = require("./utilities")
 const User = require("./models/user.model")
 const Story = require("./models/story.model")
+const upload = require("./multer")
 mongoose.connect(process.env.connectionString)
 
 
@@ -162,6 +165,28 @@ app.get("/get-all-stories", authenticateToken, async(req,res)=>{
     try{
         const stories = await Story.find({userId : userId}).sort({isFavourite : -1})
     res.status(200).json({stories : stories})
+    } catch (error){
+        res.status(500).json({
+            error : true,
+            message : error.message
+        })
+    }
+})
+
+
+app.post("/image-upload", upload.single("image") , async (req,res)=>{
+    try {
+        if(!req.file){
+            return res.status(400).json({
+                error : true,
+                message : "No image uploaded"
+            })
+        }
+
+        const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`
+        res.status(201).json({
+            imageUrl
+        })
     } catch (error){
         res.status(500).json({
             error : true,
