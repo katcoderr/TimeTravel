@@ -230,7 +230,7 @@ app.get("/get-all-stories", authenticateToken, async(req,res)=>{
     }
 })
 
-app.post("/edit-story/:id", authenticateToken, async(req,res)=>{
+app.put("/edit-story/:id", authenticateToken, async(req,res)=>{
     const {id} = req.params
 
     const {title, story, visitedLocation, imageUrl, visitedDate} = req.body
@@ -307,6 +307,36 @@ app.delete("/delete-story/:id", authenticateToken ,async(req,res)=>{
             message : "Story deleted successfully"
         })
     } catch(error) {
+        res.status(500).json({
+            error : true,
+            message : error.message
+        })
+    }
+})
+
+app.put("/update-is-favourite/:id", authenticateToken, async (req,res)=>{
+    const { id } = req.params
+    const {isFavourite} = req.body
+    const { userId } = req.user
+
+    try {
+        const timestory = await Story.findOne({_id : id, userId : userId})
+
+        if(!timestory){
+            return res.status(404).json({
+                error : true,
+                message : "Story not found"
+            })
+        }
+
+        timestory.isFavourite = isFavourite
+
+        await timestory.save()
+        res.status(200).json({
+            story : timestory,
+            message : "Update Successful"
+        })
+    } catch(error){
         res.status(500).json({
             error : true,
             message : error.message
