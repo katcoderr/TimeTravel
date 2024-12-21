@@ -378,5 +378,31 @@ app.get("/search", authenticateToken, async(req,res)=>{
     }
 })
 
+app.get("/stories/filter", authenticateToken, async(req,res)=>{
+    const {startDate, endDate} = req.query
+    const { userId } = req.user
+
+    try{
+
+        const start = new Date(parseInt(startDate))
+        const end = new Date(parseInt(endDate))
+
+        const filteredStories = await Story.find({
+            userId : userId,
+            visitedDate : { $gte : start, $lte : end}
+        }).sort({isFavourite : -1})
+
+        res.status(200).json({
+            stories : filteredStories
+        })
+
+    } catch(error){
+        res.status(500).json({
+            error : true,
+            message : error.message
+        })
+    }
+})
+
 app.listen(3000)
 module.exports = app
