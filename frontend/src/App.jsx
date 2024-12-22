@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter, Route, Routes} from "react-router-dom"
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom"
 
 import Home from "./pages/Home/Home"
 import Login from "./pages/Auth/Login"
@@ -10,6 +10,7 @@ const App = () => {
     <>
     <BrowserRouter>
     <Routes>
+    <Route path='/' exact element={ <Root/> } />
       <Route path='/dashboard' exact element={ <Home/> } />
       <Route path='/login' exact element={ <Login/> } />
       <Route path='/signup' exact element={ <Signup/> } />
@@ -17,6 +18,12 @@ const App = () => {
     </BrowserRouter>
     </>
   )
+}
+
+const Root = () => {
+  const isAuthenticated = !!localStorage.getItem("token")
+
+  return isAuthenticated ? (<Navigate to={"/dashboard"}/>) : (<Navigate to={"/login"}/>)
 }
 
 export default App
