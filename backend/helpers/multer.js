@@ -1,6 +1,10 @@
 // Adding this comment to test the CI. This is a helper functin for uploading images.
 const multer = require("multer");
 const path = require("path");
+const helloWorld = function(){
+  console.log("test");
+  
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
