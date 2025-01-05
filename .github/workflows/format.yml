@@ -1,4 +1,4 @@
-name: Linting and formatting on PR
+name: Formatting on Push
 on:
   push:
     branches: ['main']
