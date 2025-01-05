@@ -68,4 +68,4 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           sudo docker pull kartiktummawar/timetravel:latest
-          sudo docker run --restart=always -d --name timetravel -p 3000:3000 --env connectionString= ${{ secrets.DB_URL }} --env ACCESS_TOKEN_SECRET= ${{ secrets.ACCESS_TOKEN }} kartiktummawar/timetravel:latest
+          sudo docker run --restart=always -d -p 3000:3000 --env connectionString=${{ secrets.DB_URL }} --env ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN }} kartiktummawar/timetravel:latest
