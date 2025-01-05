@@ -1,8 +1,10 @@
 name: Formatting on Push
 on:
   push:
-    branches: ['main']
-    paths: ['backend/']
+    branches: 
+      - main
+    paths:
+      - 'backend/'
 
 jobs:
 
