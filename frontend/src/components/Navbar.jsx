@@ -28,8 +28,9 @@ const Navbar = ({ userInfo,
 
   return (
     <div className="bg-white flex items-center justify-between px-6 py-2 drop-shadow sticky top-0 z-10">
-      {/* <h2 className="text-cyan-600">TimeTravel</h2> */}
-      <img src="./src/timetravellogo.png" alt="TimeTravel" width={164} />
+      
+      <img src="/timetravellogo.png" alt="TimeTravel" width={164} />
+
 
       {isToken && <>
         <SearchBar

@@ -16,6 +16,7 @@ export default {
       backgroundImage : {
         'login-bg-img' : "url('./login_bg.jpg')",
         'signup-bg-img' : "url('./signup-bg.jpg')",
+        'navbar-img' : "url('./timetravellogo.png')"
       }
     },
   },
