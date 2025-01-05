@@ -2,9 +2,6 @@
 const multer = require("multer");
 const path = require("path");
 
-const helloWorld = function () {
-  console.log("Testing");
-};
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
