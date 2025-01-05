@@ -1,0 +1,26 @@
+name: Linting and formatting on PR
+on:
+  push:
+    branches: ['main']
+    paths: ['backend/']
+
+jobs:
+
+  Continuous-Integration:
+
+    name: Performs formatting on the application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the Repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Install Dependencies
+        run: cd backend/ && npm install
+        
+      - name: Run Format
+        run: cd backend/ && npm run format:check
