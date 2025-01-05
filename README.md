@@ -312,7 +312,7 @@ VITE_BASE_URL=<backend_api_url>
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/timetravel.git
+git clone https://github.com/katcoderr/timetravel.git
 ```
 
 2. Install backend dependencies:
