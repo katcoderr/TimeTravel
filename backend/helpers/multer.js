@@ -1,3 +1,4 @@
+// Adding this comment to test the CI. This is a helper functin for uploading images
 const multer = require("multer");
 const path = require("path");
 
