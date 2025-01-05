@@ -69,5 +69,5 @@ jobs:
         script: |
           sudo docker pull kartiktummawar/timetravel:latest
           sudo docker stop timetravel || true
-          sudo docker rmi timetravel || true
+          sudo docker rm timetravel || true
           sudo docker run --restart=always -d --name timetravel -p 3000:3000 --env connectionString= ${{ secrets.DB_URL }} --env ACCESS_TOKEN_SECRET= ${{ secrets.ACCESS_TOKEN }}  kartiktummawar/timetravel:latest
